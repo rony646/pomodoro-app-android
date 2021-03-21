@@ -1,15 +1,25 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, {useState, useEffect} from 'react';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import Timer from './components/Timer';
 
-export default function App() {
+
+
+const App: React.FC = () => {
+
+  const [pomodoroCountTime , setPomodoroCountTime] = useState(1500)
+
+  const time = new Date();
+  time.setSeconds(time.getSeconds() + pomodoroCountTime); // 10 minutes timer
+
+
   return (
     <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
+      <Timer expiryTimestamp={time}/>
     </View>
   );
-}
+};
+
+export default App;
 
 const styles = StyleSheet.create({
   container: {
