@@ -1,15 +1,16 @@
-import React, {useState, useEffect} from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import React from 'react';
+
+import { StyleSheet, View, Text } from 'react-native';
 import Timer from './components/Timer';
+import ProgressCircle from 'react-native-progress-circle';
 
 
 
 const App: React.FC = () => {
 
-  const [pomodoroCountTime , setPomodoroCountTime] = useState(1500)
 
   const time = new Date();
-  time.setSeconds(time.getSeconds() + pomodoroCountTime); // 10 minutes timer
+  time.setSeconds(time.getSeconds() + 1500); // 25 minutes timer
 
 
   return (
