@@ -1,55 +1,43 @@
-import React, { useState, useRef, useEffect } from 'react';
-import Constants from 'expo-constants';
-import * as Notifications from 'expo-notifications';
+import React, { useState } from 'react';
 
-
-import { StyleSheet, View, Platform, Button } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons'
+import { LinearGradient } from 'expo-linear-gradient';
+import Colors from './constants/Colors';
+import { StyleSheet, View, Pressable } from 'react-native';
 import Timer from './components/Timer';
-
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldPlaySound: false,
-    shouldShowAlert: true,
-    shouldSetBadge: false,
-  })
-})
+import ConfigModal from './components/ConfigModal/index'
 
 const App: React.FC = () => {
 
-  const [expoPushToken, setExpoPushToken] = useState<string | undefined>('');
-  const [notification, setNotification] = useState<any>(false);
-  const notificationListener: any = useRef();
-  const responseListener: any = useRef();
-
-  const getNotification = async () => {
-    await schedulePushNotification();
-  };
-
-  useEffect(() => {
-    registerForPushNotificationAsync().then(token => setExpoPushToken(token));
-
-    // notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-    //   setNotification(notification);
-    // });
-
-    // responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-    //   console.log(response);
-    // });
-
-    return() => {
-      // Notifications.removeNotificationSubscription(notificationListener);
-      // Notifications.removeNotificationSubscription(responseListener);
-    }
-  })
-
+  const [modalVisible, setModalVisible] = useState(false);
 
   const time = new Date();
   time.setSeconds(time.getSeconds() + 1500); // 25 minutes timer
 
+  const setModalVisibleHandler = () => {
+    return(
+      setModalVisible(!modalVisible)
+    )
+  }
+
+  console.log(modalVisible)
 
   return (
     <View style={styles.container}>
-      <Timer expiryTimestamp={time} notify={getNotification}/>
+      <LinearGradient 
+                start={[0,1]}
+                end={[1,0]}
+                colors={[Colors.primary1, Colors.primary2]}
+                style={styles.background}
+      />
+      <Timer expiryTimestamp={time}/>
+
+      <View>
+            <Pressable onPress={setModalVisibleHandler}  style={styles.configButton}>
+                <FontAwesome name="gear" size={48} color="#929292"/>
+            </Pressable>
+      </View>
+      <ConfigModal isOpen={modalVisible} closeModal={setModalVisibleHandler}/>
     </View>
   );
 };
@@ -63,47 +51,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-});
-
-
-const schedulePushNotification = async () => {
-  await Notifications.scheduleNotificationAsync({
-    content: {
-      title: 'The time is over! 🍅⏲️',
-      body: 'Time to open the app and star another timer',
-      data: {},
-    },
-    trigger: {seconds: 1}
-  })
-};
-
-const registerForPushNotificationAsync = async () => {
-  let token;
-  if(Constants.isDevice) {
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-    if (existingStatus !== 'granted') {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-    }
-    if (finalStatus !== 'granted') {
-      alert('Failed to get push token for push notification!');
-      return;
-    }
-    token = (await Notifications.getExpoPushTokenAsync()).data;
-    console.log(token);
-  } else {
-    console.log('You must use a real device to use this feature')
-  };
-
-  if (Platform.OS === 'android') {
-    Notifications.setNotificationChannelAsync('default', {
-      name: 'default',
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#FF231F7C',
-    });
+  background: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    height: '100%',
+  },
+  configButton: {
+    marginBottom: 18,
   }
-
-  return token;
-};
+});

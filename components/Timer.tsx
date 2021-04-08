@@ -1,16 +1,17 @@
-import React, {useState, useCallback} from 'react';
+import React, {useState} from 'react';
 import { useTimer } from 'react-timer-hook';
-import { StyleSheet, Text, View, Alert, Vibration } from 'react-native';
+import { StyleSheet, Text, View, Alert, Pressable } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import ProgressCircle from 'react-native-progress-circle';
 import ControlButton from '../components/UI/ControlButton';
 import ModeSelectButton from '../components/UI/ModeSelectButton';
+import { FontAwesome } from '@expo/vector-icons';
+import { Audio } from 'expo-av';
 
 import Colors from '../constants/Colors';
 
 interface TimerProps{
     expiryTimestamp: any;
-    notify: any;
   };
 
   const Timer: React.FC<TimerProps> = ({expiryTimestamp, notify}) => {
@@ -18,6 +19,7 @@ interface TimerProps{
     const time = new Date();
     time.setSeconds(time.getSeconds() + 1500); // 10 minutes timer
 
+    const [sound, setSound] = useState<any>();
     const [totalSeconds, setTotalSeconds] = useState(1500);
 
     const [buttonActiveColors, setButtonActiveColors] = useState({
@@ -57,9 +59,33 @@ interface TimerProps{
 
     };
 
+    async function playSound() {
+      console.log('Loading sound');
+
+      const { sound } = await Audio.Sound.createAsync(
+        require('../assets/sound.mp3')
+      )
+
+      setSound(sound)
+
+      console.log('Playing sound')
+      sound.playAsync();
+    };
+
     const onExpireTimeHandler = () => {
-      // Vibration.vibrate(400);
-      notify();
+      Alert.alert(
+        "The time is over!",
+        "Time to select another timer",
+        [  
+          {
+            text: "Close message",
+            onPress: () => {},
+            style: "cancel"
+          }
+        ]
+      )
+      playSound();
+
     };
 
 
@@ -80,12 +106,6 @@ interface TimerProps{
     return(
       
       <View style={styles.screen}>
-        <LinearGradient 
-          start={[0,1]}
-          end={[1,0]}
-          colors={[Colors.primary1, Colors.primary2]}
-          style={styles.background}
-        />
         <View style={styles.modeButtonsContainer} >
             <ModeSelectButton text="Pomodoro" color={buttonActiveColors.pomodoro} onPressFunction={() => {
                 const time = new Date();
@@ -97,7 +117,7 @@ interface TimerProps{
             </ModeSelectButton>
             <ModeSelectButton text="Short Break" color={buttonActiveColors.shortBreak} onPressFunction={() => {
                 const time = new Date();
-                time.setSeconds(time.getSeconds() + 10)
+                time.setSeconds(time.getSeconds() + 300)
                 setTotalSeconds(10);
                 changeActiveButtonColorHandler('shortBreak')
                 restart(time);
@@ -119,19 +139,13 @@ interface TimerProps{
             radius={160}
             borderWidth={8}
             color={Colors.themePrimaryColor}
-            shadowColor="rgb(146, 146, 146)"
+            shadowColor="#929292"
             bgColor={Colors.primary1}
         >
-              <LinearGradient 
-                start={[0,1]}
-                end={[1,0]}
-                colors={[Colors.primary1, Colors.primary2]}
-                style={styles.background}
-              />
+              
               <View style={styles.timerContainer}>
-              <Text style={styles.timerText}>{minutes < 10 ? `0${minutes}` : minutes} : {seconds < 10 ? `0${seconds}` : seconds}</Text>
-            {/* <Text>{isRunning ? 'running' : 'not running'}</Text> */}
-        </View>
+                <Text style={styles.timerText}>{minutes < 10 ? `0${minutes}` : minutes} : {seconds < 10 ? `0${seconds}` : seconds}</Text>
+              </View>
         </ProgressCircle>
 
         
@@ -139,6 +153,7 @@ interface TimerProps{
           <ControlButton iconName="pause" onPressFunction={pause} />
           <ControlButton iconName="play" onPressFunction={resume} />
         </View>
+
       </View>
     );
   }
@@ -150,13 +165,6 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
    
-  },
-  background: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    height: '100%',
   },
   timerContainer: {
     justifyContent: 'center',
