@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 
 import { FontAwesome } from '@expo/vector-icons'
 import { LinearGradient } from 'expo-linear-gradient';
 import Colors from './constants/Colors';
 import { StyleSheet, View, Pressable } from 'react-native';
 import Timer from './components/Timer';
-import ConfigModal from './components/ConfigModal/index'
+import ConfigModal from './components/ConfigModal/index';
+import { ThemeContextProvider } from './contexts/theme';
 
 const App: React.FC = () => {
 
@@ -22,23 +23,26 @@ const App: React.FC = () => {
 
   console.log(modalVisible)
 
-  return (
-    <View style={styles.container}>
-      <LinearGradient 
-                start={[0,1]}
-                end={[1,0]}
-                colors={[Colors.primary1, Colors.primary2]}
-                style={styles.background}
-      />
-      <Timer expiryTimestamp={time}/>
 
-      <View>
-            <Pressable onPress={setModalVisibleHandler}  style={styles.configButton}>
-                <FontAwesome name="gear" size={48} color="#929292"/>
-            </Pressable>
+  return (
+    <ThemeContextProvider>
+      <View style={styles.container}>
+        <LinearGradient 
+                  start={[0,1]}
+                  end={[1,0]}
+                  colors={[Colors.primary1, Colors.primary2]}
+                  style={styles.background}
+        />
+        <Timer expiryTimestamp={time}/>
+
+        <View>
+              <Pressable onPress={setModalVisibleHandler}  style={styles.configButton}>
+                  <FontAwesome name="gear" size={48} color="#929292"/>
+              </Pressable>
+        </View>
+        <ConfigModal isOpen={modalVisible} closeModal={setModalVisibleHandler}/>
       </View>
-      <ConfigModal isOpen={modalVisible} closeModal={setModalVisibleHandler}/>
-    </View>
+    </ThemeContextProvider>
   );
 };
 

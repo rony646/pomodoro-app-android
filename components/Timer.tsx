@@ -1,12 +1,11 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import { useTimer } from 'react-timer-hook';
-import { StyleSheet, Text, View, Alert, Pressable } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { StyleSheet, Text, View, Alert } from 'react-native';
 import ProgressCircle from 'react-native-progress-circle';
 import ControlButton from '../components/UI/ControlButton';
 import ModeSelectButton from '../components/UI/ModeSelectButton';
-import { FontAwesome } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
+import ThemeContext from '../contexts/theme';
 
 import Colors from '../constants/Colors';
 
@@ -14,7 +13,9 @@ interface TimerProps{
     expiryTimestamp: any;
   };
 
-  const Timer: React.FC<TimerProps> = ({expiryTimestamp, notify}) => {
+  const Timer: React.FC<TimerProps> = ({expiryTimestamp}) => {
+
+    const themeContext = useContext(ThemeContext);
     
     const time = new Date();
     time.setSeconds(time.getSeconds() + 1500); // 10 minutes timer
@@ -34,7 +35,7 @@ interface TimerProps{
       switch(activeButton) {
         case 'pomodoro':
          setButtonActiveColors({
-          pomodoro: Colors.themePrimaryColor,
+          pomodoro: themeContext.color,
           shortBreak: '#1b1f36',
           longBreak: '#1b1f36'
         })
@@ -42,7 +43,7 @@ interface TimerProps{
         case 'shortBreak':
           setButtonActiveColors({
             pomodoro: '#1b1f36',
-            shortBreak: Colors.themePrimaryColor,
+            shortBreak: themeContext.color,
             longBreak: '#1b1f36'
           })
           break;
@@ -50,7 +51,7 @@ interface TimerProps{
           setButtonActiveColors({
             pomodoro: '#1b1f36',
             shortBreak: '#1b1f36',
-            longBreak: Colors.themePrimaryColor,
+            longBreak: themeContext.color,
           })
           break;
         default:
@@ -138,7 +139,7 @@ interface TimerProps{
             percent={percentageSeconds}
             radius={160}
             borderWidth={8}
-            color={Colors.themePrimaryColor}
+            color={themeContext.color}
             shadowColor="#929292"
             bgColor={Colors.primary1}
         >

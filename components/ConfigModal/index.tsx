@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 
 import { AntDesign } from '@expo/vector-icons'
 import { View, Text, Modal, StyleSheet, Button, Pressable } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import Colors from '../../constants/Colors';
+import ThemeContext from '../../contexts/theme';
 
 interface ConfigModalProps {
     isOpen: boolean;
@@ -11,6 +12,10 @@ interface ConfigModalProps {
 }
 
 const ConfigModal: React.FC<ConfigModalProps> = ({isOpen, closeModal}) => {
+
+    const themeContext = useContext(ThemeContext);
+
+    console.log('Current color: ', themeContext.color)
 
     const [colors, setColors] = useState({
         color1: {
@@ -45,6 +50,7 @@ const ConfigModal: React.FC<ConfigModalProps> = ({isOpen, closeModal}) => {
                     }
                 };
                 setColors(newColors);
+                themeContext.setColor(Colors.themePrimaryColor);
                 break;
             case 'color2':
                 newColors = {
@@ -62,6 +68,7 @@ const ConfigModal: React.FC<ConfigModalProps> = ({isOpen, closeModal}) => {
                     }
                 };
                 setColors(newColors);
+                themeContext.setColor(Colors.themeSecondaryColor);
                 break;
             case 'color3':
                 newColors = {
@@ -79,6 +86,7 @@ const ConfigModal: React.FC<ConfigModalProps> = ({isOpen, closeModal}) => {
                     }
                 };
                 setColors(newColors);
+                themeContext.setColor(Colors.themeTertiaryColor);
                 break;
         }
     };
@@ -96,22 +104,35 @@ const ConfigModal: React.FC<ConfigModalProps> = ({isOpen, closeModal}) => {
                 <View style={styles.colorOptionsContainer}>
                     <Text style={styles.title}>Color Settings</Text>
                     <Text>Select a theme color to the app: </Text>
+
+                    <View style={styles.optionsContainer}>
+                        <View style={styles.option}>
+                            <View style={styles.color1}></View>
+                            <CheckBox
+                                value={colors.color1.selected}
+                                onValueChange={() => onChangeColorHandler('color1')}
+                            />
+                        </View>
+
+                        <View style={styles.option}>
+                        <View style={styles.color2}></View>
+                            <CheckBox
+                                value={colors.color2.selected}
+                                onValueChange={() => onChangeColorHandler('color2')}
+                            />
+                        </View>
+
+                        <View style={styles.option}>
+                            <View style={styles.color3}></View>
+                            <CheckBox
+                                value={colors.color3.selected}
+                                onValueChange={() => onChangeColorHandler('color3')}
+                            />
+                        </View>
+                        
+                    </View>
                 </View>
-                <Text>Color 1</Text>
-                <CheckBox
-                    value={colors.color1.selected}
-                    onValueChange={() => onChangeColorHandler('color1')}
-                />
-                 <Text>Color 2</Text>
-                 <CheckBox
-                    value={colors.color2.selected}
-                    onValueChange={() => onChangeColorHandler('color2')}
-                />
-                 <Text>Color 3</Text>
-                 <CheckBox
-                    value={colors.color3.selected}
-                    onValueChange={() => onChangeColorHandler('color3')}
-                />
+               
             </View>
 
         </Modal>
@@ -140,6 +161,34 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 25,
         fontWeight: 'bold'
+    },
+    optionsContainer: {
+        // backgroundColor: 'blue',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'row',
+        marginTop: 40
+    },
+    option: {
+        paddingHorizontal: 20
+    },
+    color1: {
+        height: 35,
+        width: 35,
+        borderRadius: 17.5,
+        backgroundColor: Colors.themePrimaryColor
+    },
+    color2: {
+        height: 35,
+        width: 35,
+        borderRadius: 17.5,
+        backgroundColor: Colors.themeSecondaryColor
+    },
+    color3: {
+        height: 35,
+        width: 35,
+        borderRadius: 17.5,
+        backgroundColor: Colors.themeTertiaryColor
     }
 })
 
