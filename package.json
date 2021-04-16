@@ -8,6 +8,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@react-native-community/checkbox": "^0.5.7",
     "expo": "~40.0.0",
     "expo-av": "~8.7.0",
     "expo-linear-gradient": "~8.4.0",
