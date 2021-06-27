@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     height: 250,
   },
   timerText: {
-    fontSize: 75,
+    fontSize: 60,
     fontWeight: 'bold',
     color: '#fff',
     
